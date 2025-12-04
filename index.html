@@ -21,7 +21,7 @@
     <div id="successMessage" class="hidden min-h-screen flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center fade-in">
             <svg class="w-16 h-16 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 0 0-18 0z"></path>
             </svg>
             <!-- Dynamic title + body -->
             <h2 id="successTitle" class="text-2xl font-bold text-gray-800 mb-2">
@@ -65,14 +65,14 @@
                             physical implementation and silicon bring-up.
                         </p>
                         <p class="text-blue-50 mb-3">
-                            Whether you are a fresher with solid fundamentals, or an experienced engineer in:
+                            Whether you are a fresher with solid fundamentals, or an experienced engineer in
                             <span class="font-semibold">Verification, DFT, Physical Design, RTL, AMS, ASIC or FPGA</span> – we want
                             to know you. This single form helps us match you to the right opportunity when it appears.
                         </p>
                         <ul class="list-disc text-blue-50 pl-5 space-y-1 text-sm md:text-base">
                             <li>We work with multiple VLSI design and product companies.</li>
                             <li>Your details are reviewed by people who understand VLSI – not generic HR filters.</li>
-                            <li>We reach out only when there is a relevant and serious opportunity for you.</li>
+                            <li>We contact you only for serious and relevant opportunities.</li>
                         </ul>
                     </div>
                 </div>
@@ -231,6 +231,7 @@ Responsibilities: Developed UVM testbench, created test plans, achieved 95% code
                     <button type="button" id="submitBtn" class="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-4 rounded-lg font-bold text-lg hover:from-blue-700 hover:to-cyan-600 transition shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
                         Submit Application
                     </button>
+                    <!-- Global validation / error message -->
                     <div id="submitError" class="bg-red-50 border-2 border-red-200 rounded-lg p-4 text-red-700 hidden"></div>
                 </div>
             </div>
@@ -351,9 +352,18 @@ Responsibilities: Developed UVM testbench, created test plans, achieved 95% code
             }
         });
 
+        // ✅ Validation with global message
         function validateForm() {
             let isValid = true;
+
+            // Global error message under the button
+            const globalError = document.getElementById('submitError');
+            if (globalError) {
+                globalError.classList.add('hidden');
+                globalError.textContent = '';
+            }
             
+            // Hide all field-level errors
             document.querySelectorAll('[id$="Error"]').forEach(el => {
                 el.classList.add('hidden');
             });
@@ -367,16 +377,15 @@ Responsibilities: Developed UVM testbench, created test plans, achieved 95% code
             const currentCtc      = document.getElementById('currentCtc').value.trim();
             const expectedCtc     = document.getElementById('expectedCtc').value.trim();
             const noticePeriod    = document.getElementById('noticePeriod').value.trim();
-            const projectDetails  = document.getElementById('projectDetails').value.trim();
-            const resumeInput     = document.getElementById('resume');
-            const hasResume       = resumeInput.files && resumeInput.files.length > 0;
 
+            // Full name
             if (!fullName) {
                 document.getElementById('fullNameError').textContent = 'Full name is required';
                 document.getElementById('fullNameError').classList.remove('hidden');
                 isValid = false;
             }
 
+            // Email
             if (!email) {
                 document.getElementById('emailError').textContent = 'Email is required';
                 document.getElementById('emailError').classList.remove('hidden');
@@ -387,6 +396,7 @@ Responsibilities: Developed UVM testbench, created test plans, achieved 95% code
                 isValid = false;
             }
 
+            // Phone
             if (!phone) {
                 document.getElementById('phoneError').textContent = 'Phone number is required';
                 document.getElementById('phoneError').classList.remove('hidden');
@@ -397,43 +407,54 @@ Responsibilities: Developed UVM testbench, created test plans, achieved 95% code
                 isValid = false;
             }
 
+            // Current Location
             if (!currentLocation) {
                 document.getElementById('currentLocationError').textContent = 'Current location is required';
                 document.getElementById('currentLocationError').classList.remove('hidden');
                 isValid = false;
             }
 
+            // Specialization
             if (!specialization) {
                 document.getElementById('specializationError').textContent = 'Please select your specialization';
                 document.getElementById('specializationError').classList.remove('hidden');
                 isValid = false;
             }
 
+            // Experience
             if (!experience) {
                 document.getElementById('experienceError').textContent = 'Years of experience is required';
                 document.getElementById('experienceError').classList.remove('hidden');
                 isValid = false;
             }
 
+            // Current CTC
             if (!currentCtc) {
                 document.getElementById('currentCtcError').textContent = 'Current CTC is required';
                 document.getElementById('currentCtcError').classList.remove('hidden');
                 isValid = false;
             }
 
+            // Expected CTC
             if (!expectedCtc) {
                 document.getElementById('expectedCtcError').textContent = 'Expected CTC is required';
                 document.getElementById('expectedCtcError').classList.remove('hidden');
                 isValid = false;
             }
 
+            // Notice period
             if (!noticePeriod) {
                 document.getElementById('noticePeriodError').textContent = 'Notice period is required';
                 document.getElementById('noticePeriodError').classList.remove('hidden');
                 isValid = false;
             }
 
-            // Resume & project details stay optional
+            // ✅ If anything is invalid, show one big message under the button too
+            if (!isValid && globalError) {
+                globalError.textContent = '⚠️ Some mandatory details are missing or invalid. Please fill all fields marked with * above and then submit again.';
+                globalError.classList.remove('hidden');
+                globalError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
 
             return isValid;
         }
@@ -525,6 +546,7 @@ Responsibilities: Developed UVM testbench, created test plans, achieved 95% code
                 document.getElementById('mainForm').classList.add('hidden');
                 document.getElementById('successMessage').classList.remove('hidden');
 
+                // ⏱ Give 10 seconds to read the thank-you message
                 setTimeout(() => {
                     document.getElementById('successMessage').classList.add('hidden');
                     document.getElementById('mainForm').classList.remove('hidden');
@@ -548,7 +570,7 @@ Responsibilities: Developed UVM testbench, created test plans, achieved 95% code
                     
                     submitBtn.disabled = false;
                     submitBtn.textContent = 'Submit Application';
-                }, 15000);
+                }, 10000); // 10 seconds
 
             } catch (error) {
                 console.error('Submission error:', error);
