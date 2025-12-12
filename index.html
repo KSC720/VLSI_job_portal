@@ -364,7 +364,7 @@
                         
                         <div class="bg-slate-800/60 rounded-lg p-4 border border-blue-500/30 text-xs sm:text-sm">
                             <h3 class="text-cyan-300 font-semibold mb-2 flex items-center">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                                 What you can expect:
@@ -580,20 +580,71 @@
                         <p class="text-gray-500 text-xs sm:text-sm mt-1">Accepted formats: PDF, DOC, DOCX (Max 5MB)</p>
                     </div>
 
+                    <!-- Projects: now mandatory, multiple entries -->
                     <div>
                         <label class="block text-gray-700 font-semibold mb-1.5">
-                            Project Details & Responsibilities <span class="text-gray-500 text-xs sm:text-sm font-normal">(Optional but recommended)</span>
+                            Project Details & Responsibilities <span class="text-red-400">*</span>
                         </label>
-                        <textarea id="projectDetails" rows="6" class="w-full px-3.5 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition resize-y input-focus text-sm" placeholder="Please describe:
-• Projects you've worked on
-• Your role in each project
-• Key responsibilities
-• Technologies/tools used (Synopsys, Cadence, Mentor Graphics, etc.)
-• Achievements or outcomes"></textarea>
-                        <p id="projectDetailsError" class="text-red-500 text-xs sm:text-sm mt-1 hidden"></p>
-                        <p class="text-gray-500 text-xs sm:text-sm mt-1">
-                            💡 Even if you upload a resume, a short summary here helps us quickly understand your strengths.
-                        </p>
+                        <p class="text-gray-600 text-xs sm:text-sm mb-2">Add one or more projects. At least one project is mandatory.</p>
+
+                        <div id="projectsContainer" class="space-y-3 mb-3">
+                            <!-- dynamically added project cards will appear here -->
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button type="button" id="openAddProject" class="px-4 py-2 bg-white border-2 border-gray-300 rounded-lg text-sm hover:border-blue-400">+ Add Project</button>
+                            <button type="button" id="clearProjects" class="px-4 py-2 bg-red-50 border-2 border-red-200 text-red-700 rounded-lg text-sm">Clear All</button>
+                        </div>
+
+                        <p id="projectsError" class="text-red-500 text-xs sm:text-sm mt-2 hidden"></p>
+
+                        <!-- hidden fallback textarea (keeps previous payload compatibility) -->
+                        <textarea id="projectDetails" rows="4" class="w-full px-3.5 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition resize-y input-focus text-sm mt-3 hidden" placeholder="Summary of projects"></textarea>
+                        <p class="text-gray-500 text-xs sm:text-sm mt-1">Tip: Use the Add Project button to enter structured project information.</p>
+                    </div>
+
+                    <!-- Add Project Modal (simple inline panel) -->
+                    <div id="addProjectPanel" class="fixed inset-0 bg-black/40 hidden items-center justify-center p-4 z-40">
+                        <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full p-6">
+                            <h4 class="text-lg font-bold mb-3">Add Project</h4>
+
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-semibold mb-1">Project Name <span class="text-red-500">*</span></label>
+                                    <input id="projName" class="w-full px-3.5 py-2 border-2 border-gray-300 rounded-lg input-focus text-sm" placeholder="e.g., SoC Verification for XYZ">
+                                    <p id="projNameError" class="text-red-500 text-xs mt-1 hidden"></p>
+                                </div>
+
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-semibold mb-1">Project Description <span class="text-red-500">*</span></label>
+                                    <textarea id="projDesc" rows="4" class="w-full px-3.5 py-2 border-2 border-gray-300 rounded-lg input-focus text-sm" placeholder="Describe the project, goals, and your contributions."></textarea>
+                                    <p id="projDescError" class="text-red-500 text-xs mt-1 hidden"></p>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-semibold mb-1">Client <span class="text-red-500">*</span></label>
+                                    <input id="projClient" class="w-full px-3.5 py-2 border-2 border-gray-300 rounded-lg input-focus text-sm" placeholder="Client or company name">
+                                    <p id="projClientError" class="text-red-500 text-xs mt-1 hidden"></p>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-semibold mb-1">Duration <span class="text-gray-500 text-xs">(optional)</span></label>
+                                    <input id="projDuration" class="w-full px-3.5 py-2 border-2 border-gray-300 rounded-lg input-focus text-sm" placeholder="e.g., Jan 2022 — Jun 2023 or 8 months">
+                                </div>
+
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-semibold mb-1">Roles & Responsibilities <span class="text-red-500">*</span></label>
+                                    <textarea id="projRoles" rows="3" class="w-full px-3.5 py-2 border-2 border-gray-300 rounded-lg input-focus text-sm" placeholder="Your role and key responsibilities"></textarea>
+                                    <p id="projRolesError" class="text-red-500 text-xs mt-1 hidden"></p>
+                                </div>
+
+                            </div>
+
+                            <div class="flex justify-end gap-2 mt-4">
+                                <button id="cancelAddProject" class="px-4 py-2 rounded-lg border-2 border-gray-300">Cancel</button>
+                                <button id="saveProject" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg">Save Project</button>
+                            </div>
+                        </div>
                     </div>
 
                     <button type="button" id="submitBtn" class="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-3.5 sm:py-4 rounded-lg font-bold text-base sm:text-lg hover:from-blue-700 hover:to-cyan-600 transition shadow-lg hover:shadow-xl transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none relative overflow-hidden">
@@ -619,6 +670,7 @@
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxjxEhPGHGlsDxL-m3JeMTjERBCgStjt74ed-imkMhVYT4-lQKG_QT78Ixkfjpvmb8/exec';
 
         let selectedProtocols = [];
+        let projects = []; // store project objects
 
         document.getElementById('protocolButtons').addEventListener('click', function(e) {
             if (e.target.classList.contains('protocol-btn')) {
@@ -809,6 +861,14 @@
                 isValid = false;
             }
 
+            // new validation: require at least one project
+            if (projects.length === 0) {
+                const projErr = document.getElementById('projectsError');
+                projErr.textContent = 'Please add at least one project (project name, description, client, roles).';
+                projErr.classList.remove('hidden');
+                isValid = false;
+            }
+
             if (!isValid && globalError) {
                 globalError.textContent = '⚠️ Some mandatory details are missing or invalid. Please fill all fields marked with * above and then submit again.';
                 globalError.classList.remove('hidden');
@@ -833,6 +893,158 @@
             });
         }
 
+        // Projects UI handling
+        const openAddProject = document.getElementById('openAddProject');
+        const addProjectPanel = document.getElementById('addProjectPanel');
+        const cancelAddProject = document.getElementById('cancelAddProject');
+        const saveProjectBtn = document.getElementById('saveProject');
+        const projectsContainer = document.getElementById('projectsContainer');
+        const clearProjectsBtn = document.getElementById('clearProjects');
+
+        openAddProject.addEventListener('click', () => {
+            showAddProjectPanel();
+        });
+        cancelAddProject.addEventListener('click', () => {
+            hideAddProjectPanel();
+        });
+        clearProjectsBtn.addEventListener('click', () => {
+            if (confirm('Clear all projects?')) {
+                projects = [];
+                renderProjects();
+            }
+        });
+
+        function showAddProjectPanel(editIndex = -1) {
+            // if editIndex >=0, populate fields for editing
+            if (editIndex >= 0) {
+                const p = projects[editIndex];
+                document.getElementById('projName').value = p.name;
+                document.getElementById('projDesc').value = p.description;
+                document.getElementById('projClient').value = p.client;
+                document.getElementById('projDuration').value = p.duration || '';
+                document.getElementById('projRoles').value = p.roles;
+                saveProjectBtn.setAttribute('data-edit-index', editIndex);
+            } else {
+                document.getElementById('projName').value = '';
+                document.getElementById('projDesc').value = '';
+                document.getElementById('projClient').value = '';
+                document.getElementById('projDuration').value = '';
+                document.getElementById('projRoles').value = '';
+                saveProjectBtn.removeAttribute('data-edit-index');
+            }
+            // hide any previous field errors
+            ['projNameError','projDescError','projClientError','projRolesError'].forEach(id => document.getElementById(id).classList.add('hidden'));
+
+            addProjectPanel.classList.remove('hidden');
+            addProjectPanel.classList.add('flex');
+        }
+
+        function hideAddProjectPanel() {
+            addProjectPanel.classList.add('hidden');
+            addProjectPanel.classList.remove('flex');
+            saveProjectBtn.removeAttribute('data-edit-index');
+        }
+
+        saveProjectBtn.addEventListener('click', () => {
+            // validate project fields
+            const name = document.getElementById('projName').value.trim();
+            const desc = document.getElementById('projDesc').value.trim();
+            const client = document.getElementById('projClient').value.trim();
+            const duration = document.getElementById('projDuration').value.trim();
+            const roles = document.getElementById('projRoles').value.trim();
+
+            let ok = true;
+            if (!name) {
+                document.getElementById('projNameError').textContent = 'Project name is required';
+                document.getElementById('projNameError').classList.remove('hidden');
+                ok = false;
+            }
+            if (!desc) {
+                document.getElementById('projDescError').textContent = 'Project description is required';
+                document.getElementById('projDescError').classList.remove('hidden');
+                ok = false;
+            }
+            if (!client) {
+                document.getElementById('projClientError').textContent = 'Client is required';
+                document.getElementById('projClientError').classList.remove('hidden');
+                ok = false;
+            }
+            if (!roles) {
+                document.getElementById('projRolesError').textContent = 'Roles & responsibilities are required';
+                document.getElementById('projRolesError').classList.remove('hidden');
+                ok = false;
+            }
+
+            if (!ok) return;
+
+            const editIndex = saveProjectBtn.getAttribute('data-edit-index');
+            const projectObj = { name, description: desc, client, duration, roles };
+
+            if (editIndex !== null && editIndex !== undefined) {
+                projects[Number(editIndex)] = projectObj;
+            } else {
+                projects.push(projectObj);
+            }
+
+            renderProjects();
+            hideAddProjectPanel();
+        });
+
+        function renderProjects() {
+            projectsContainer.innerHTML = '';
+            if (projects.length === 0) {
+                projectsContainer.innerHTML = `<div class="text-gray-500 text-sm">No projects added yet.</div>`;
+            } else {
+                projects.forEach((p, idx) => {
+                    const card = document.createElement('div');
+                    card.className = 'border rounded-lg p-3 bg-gray-50 flex flex-col sm:flex-row justify-between gap-3 items-start';
+                    card.innerHTML = `
+                        <div class="flex-1">
+                            <div class="text-sm font-semibold text-gray-800">${escapeHtml(p.name)}</div>
+                            <div class="text-xs text-gray-600 mt-1">Client: <span class="font-medium text-gray-700">${escapeHtml(p.client)}</span> ${p.duration ? '• ' + escapeHtml(p.duration) : ''}</div>
+                            <div class="text-xs text-gray-700 mt-2">${escapeHtml(p.description)}</div>
+                            <div class="text-xs text-gray-700 mt-2"><strong>Roles:</strong> ${escapeHtml(p.roles)}</div>
+                        </div>
+                        <div class="flex-shrink-0 flex gap-2">
+                            <button class="px-3 py-1.5 border rounded-lg text-xs" onclick="editProject(${idx})">Edit</button>
+                            <button class="px-3 py-1.5 border rounded-lg text-xs text-red-600" onclick="removeProject(${idx})">Remove</button>
+                        </div>
+                    `;
+                    projectsContainer.appendChild(card);
+                });
+            }
+
+            // update hidden textarea summary for backward compatibility
+            const summary = projects.map(p => `${p.name} — ${p.client}${p.duration ? ' • ' + p.duration : ''}\nRoles: ${p.roles}\n${p.description}`).join('\n\n');
+            document.getElementById('projectDetails').value = summary;
+
+            // hide projects error if any projects exist
+            if (projects.length > 0) {
+                document.getElementById('projectsError').classList.add('hidden');
+            }
+        }
+
+        function editProject(idx) {
+            showAddProjectPanel(idx);
+        }
+
+        function removeProject(idx) {
+            if (confirm('Remove this project?')) {
+                projects.splice(idx, 1);
+                renderProjects();
+            }
+        }
+
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/\"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // submission logic
         document.getElementById('submitBtn').addEventListener('click', async function() {
             if (!validateForm()) {
                 return;
@@ -873,6 +1085,7 @@
                     noticePeriod: document.getElementById('noticePeriod').value.trim() || 'Not specified',
                     currentLocation: document.getElementById('currentLocation').value.trim() || 'Not specified',
                     protocols: selectedProtocols.length > 0 ? selectedProtocols.join(', ') : 'None',
+                    projects: projects, // structured projects array
                     projectDetails: document.getElementById('projectDetails').value.trim() || 'Not provided',
                     resumeData: resumeData,
                     resumeFileName: resumeFileName,
@@ -921,8 +1134,10 @@
                     document.getElementById('resumeSuccess').classList.add('hidden');
                     
                     selectedProtocols = [];
+                    projects = [];
                     updateProtocolButtons();
                     updateSelectedProtocols();
+                    renderProjects();
                     
                     submitBtn.disabled = false;
                     submitBtn.textContent = 'Submit Application';
@@ -940,7 +1155,7 @@
 
         updateProtocolButtons();
         updateSelectedProtocols();
+        renderProjects();
     </script>
 </body>
 </html>
-
